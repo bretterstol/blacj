@@ -16,9 +16,9 @@ module Lib
 import System.Random (randomRIO)
 import Control.Monad.State
 
-data Color = Hearts | Diamonds | Clubs | Space deriving (Show, Enum)
+data Color = Hearts | Diamonds | Clubs | Space deriving (Show, Enum, Eq)
 
-data Value = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Show, Enum)
+data Value = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Show, Enum, Eq)
 
 type Card = (Color, Value)
 

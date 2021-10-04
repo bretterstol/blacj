@@ -14,6 +14,6 @@ controller hand deck = do
   if line == "y" then do
       card <- getRandomCard deck
       print card
-      controller (card : hand) deck
+      controller (card : hand) (filter (/= card) deck)
   else print $ getState hand
 
