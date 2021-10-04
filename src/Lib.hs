@@ -7,10 +7,11 @@ module Lib
     , HandScore
     , GameState
     , createDeck
-    , getRandomCard
     , handState
     , getState
     , fromCardToInt
+    , checkState
+    , getNewCard
     ) where
 
 import System.Random (randomRIO)
@@ -33,6 +34,10 @@ createDeck = do
 getRandomCard :: Deck -> IO Card
 getRandomCard deck = (deck !!) <$> randomRIO (0, length deck - 1)
 
+getNewCard :: Deck -> IO (Deck, Card)
+getNewCard deck = do
+  card <- getRandomCard deck
+  return (filter (/= card) deck, card)
 
 type Hand = Deck
 type HandScore = (Hand, Int)
@@ -63,3 +68,8 @@ fromCardToInt c = case c of (_, Two) -> 2
 getState :: Hand -> HandScore
 getState cards = evalState (handState cards) ([], 0)
 
+checkState :: Hand -> IO (Either Int Int)
+checkState cards = let
+  (_, score) = getState cards
+  in if score > 21 then return $ Left score
+    else return $ Right score 
