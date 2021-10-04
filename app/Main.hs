@@ -34,19 +34,6 @@ handleResult hand deck = do
           print $ getState hand
 
 
-shouldQuit :: HandScore -> Bool
-shouldQuit (_, score) = score > 16
-
-dealer :: Hand -> Deck -> IO HandScore
-dealer hand deck = do
-  let state = getState hand
-  if shouldQuit state then return state
-  else do
-    (newDeck, card) <- getNewCard deck
-    (newDeck, card) <- getNewCard deck
-    dealer (card:hand) newDeck
-
-
 declareAWinner :: HandScore -> HandScore -> IO ()
 declareAWinner (userHand, userScore) (dealerHand, dealerScore) =
   if dealerScore < 22 && dealerScore >= userScore then do

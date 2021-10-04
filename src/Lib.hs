@@ -12,6 +12,7 @@ module Lib
     , fromCardToInt
     , checkState
     , getNewCard
+    , dealer
     ) where
 
 import System.Random (randomRIO)
@@ -73,3 +74,15 @@ checkState cards = let
   (_, score) = getState cards
   in if score > 21 then return $ Left score
     else return $ Right score 
+    
+    
+shouldQuit :: HandScore -> Bool
+shouldQuit (_, score) = score > 16
+
+dealer :: Hand -> Deck -> IO HandScore
+dealer hand deck = do
+  let dealerState = getState hand
+  if shouldQuit dealerState then return dealerState
+  else do
+    (newDeck, card) <- getNewCard deck
+    dealer (card:hand) newDeck
