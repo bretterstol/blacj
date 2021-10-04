@@ -5,15 +5,15 @@ import Lib
 main :: IO ()
 main = do
   putStrLn "Lets play a game!"
-  controller
+  controller [] createDeck
 
-controller :: IO()
-controller = do
+controller :: Hand -> Deck -> IO()
+controller hand deck = do
   putStrLn "Do you want a card? y/n"
   line <- getLine
   if line == "y" then do
-      card <- getRandomCard createDeck
+      card <- getRandomCard deck
       print card
-      print $ getState card
-      controller
-    else putStrLn "Bye"
+      controller (card : hand) deck
+  else print $ getState hand
+

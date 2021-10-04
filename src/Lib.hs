@@ -3,10 +3,14 @@ module Lib
     , Value
     , Card
     , Deck
+    , Hand
+    , HandScore
+    , GameState
     , createDeck
     , getRandomCard
     , handState
     , getState
+    , fromCardToInt
     ) where
 
 import System.Random (randomRIO)
@@ -26,24 +30,36 @@ createDeck = do
   color <- [Hearts ..]
   return (color, value)
 
-getRandomCard :: Deck -> IO(Card)
+getRandomCard :: Deck -> IO Card
 getRandomCard deck = (deck !!) <$> randomRIO (0, length deck - 1)
 
 
+type Hand = Deck
+type HandScore = (Hand, Int)
+type GameState = State HandScore
 
-type HandScore = (Deck, Int)
 
-type GameState = State (Hand, Int)
-
-handState :: Card -> GameState Int
-handState card = do
+handState :: Hand -> GameState HandScore
+handState [] = do
   (hand, score) <- get
-  put ([card] ++ hand, 10)
-  (hand, newScore) <- get
-  return newScore
+  return (hand, score)
+handState (card:cards) = do
+  (hand, val) <- get
+  put (card:hand, val + fromCardToInt card)
+  handState cards
 
-getState :: Card -> Int
-getState c = evalState (handState c) ([], 0)
+fromCardToInt :: Card -> Int
+fromCardToInt c = case c of (_, Two) -> 2
+                            (_, Three) -> 3
+                            (_, Four) -> 4
+                            (_, Five) -> 5
+                            (_, Six) -> 6
+                            (_, Seven) -> 7
+                            (_, Eight) -> 8
+                            (_, Nine) -> 9
+                            _ -> 10
 
-calculateValue :: Card -> Int
-calculateValue c = 10
+
+getState :: Hand -> HandScore
+getState cards = evalState (handState cards) ([], 0)
+
